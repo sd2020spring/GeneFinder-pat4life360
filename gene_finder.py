@@ -14,14 +14,23 @@ from load import load_seq
 def shuffle_string(s):
     """Shuffles the characters in the input string
         NOTE: this is a helper function, you do not
-        have to modify this in any way """
+        have to modify this inz` any way """
     return ''.join(random.sample(s, len(s)))
+
 
 # YOU WILL START YOUR IMPLEMENTATION FROM HERE DOWN ###
 
 
 def get_complement(nucleotide):
-    """ Returns the complementary nucleotide
+    if nucleotide=='A':
+        return 'T'
+    elif nucleotide=='C':
+        return 'G'
+    elif nucleotide=='G':
+       return 'C'
+    elif nucleotide=='T':
+       return 'A'
+""" Returns the complementary nucleotide
 
         nucleotide: a nucleotide (A, C, G, or T) represented as a string
         returns: the complementary nucleotide
@@ -30,12 +39,21 @@ def get_complement(nucleotide):
     >>> get_complement('C')
     'G'
     """
-    # TODO: implement this
-    pass
+
+
+
+    #TODO: implement this
+pass
 
 
 def get_reverse_complement(dna):
-    """ Computes the reverse complementary sequence of DNA for the specfied DNA
+    str = ''
+    for i in dna:
+
+        str = get_complement(i) + str
+
+    return str
+""" Computes the reverse complementary sequence of DNA for the specfied DNA
         sequence
 
         dna: a DNA sequence represented as a string
@@ -44,13 +62,28 @@ def get_reverse_complement(dna):
     'AAAGCGGGCAT'
     >>> get_reverse_complement("CCGCGTTCA")
     'TGAACGCGG'
-    """
+"""
     # TODO: implement this
-    pass
+pass
 
 
 def rest_of_ORF(dna):
-    """ Takes a DNA sequence that is assumed to begin with a start
+  stop1='TAA'
+  stop2='TAG'
+  stop3='TGA'
+  for i in range(3,len(dna)-3,3):
+      codon=dna[i:i+3]
+      if (codon==stop1 or codon==stop2 or codon==stop3):
+        return dna[0:i]
+
+
+
+
+
+
+
+
+""" Takes a DNA sequence that is assumed to begin with a start
         codon and returns the sequence up to but not including the
         first in frame stop codon.  If there is no in frame stop codon,
         returns the whole string.
@@ -61,13 +94,31 @@ def rest_of_ORF(dna):
     'ATG'
     >>> rest_of_ORF("ATGAGATAGG")
     'ATGAGA'
-    """
+"""
     # TODO: implement this
-    pass
+pass
 
 
 def find_all_ORFs_oneframe(dna):
-    """ Finds all non-nested open reading frames in the given DNA
+    ORF=''
+    empty=[]
+    start='ATG'
+    stop1='TAA'
+    stop2='TAG'
+    stop3='TGA'
+    for i in range(0,len(dna)-3,3):
+      codon=dna[i:i+3]
+      if codon==start:
+        ORF=rest_of_ORF(dna[i:])
+        len_ORF=len(ORF)
+        empty=empty.append(ORF)
+        i=i+len_ORF-3
+        return empty
+
+
+
+
+""" Finds all non-nested open reading frames in the given DNA
         sequence and returns them as a list.  This function should
         only find ORFs that are in the default frame of the sequence
         (i.e. they start on indices that are multiples of 3).
@@ -78,13 +129,20 @@ def find_all_ORFs_oneframe(dna):
         returns: a list of non-nested ORFs
     >>> find_all_ORFs_oneframe("ATGCATGAATGTAGATAGATGTGCCC")
     ['ATGCATGAATGTAGA', 'ATGTGCCC']
-    """
+"""
     # TODO: implement this
-    pass
+pass
 
 
 def find_all_ORFs(dna):
-    """ Finds all non-nested open reading frames in the given DNA sequence in
+    initial=0
+    length=len(dna)
+    array=[]
+    while length>0:
+        array+=find_all_ORFs_oneframe(dna)
+        dna=dna[0:length]
+    return array
+""" Finds all non-nested open reading frames in the given DNA sequence in
         all 3 possible frames and returns them as a list.  By non-nested we
         mean that if an ORF occurs entirely within another ORF and they are
         both in the same frame, it should not be included in the returned list
@@ -97,45 +155,54 @@ def find_all_ORFs(dna):
     ['ATGCATGAATGTAG', 'ATGAATGTAG', 'ATG']
     """
     # TODO: implement this
-    pass
+pass
 
 
 def find_all_ORFs_both_strands(dna):
-    """ Finds all non-nested open reading frames in the given DNA sequence on both
+    final_list=[]
+    final_list.append(find_all_ORFs(dna))
+    final_list.append(find_all_ORFs(get_reverse_complement(dna)))
+""" Finds all non-nested open reading frames in the given DNA sequence on both
         strands.
 
         dna: a DNA sequence
         returns: a list of non-nested ORFs
     >>> find_all_ORFs_both_strands("ATGCGAATGTAGCATCAAA")
-    ['ATGCGAATG', 'ATGCTACATTCGCAT']
+     ['ATGCGAATG', 'ATGCTACATTCGCAT']
     """
     # TODO: implement this
-    pass
+pass
 
 
 def longest_ORF(dna):
-    """ Finds the longest ORF on both strands of the specified DNA and returns it
+    return max(array, key=len)
+""" Finds the longest ORF on both strands of the specified DNA and returns it
         as a string
     >>> longest_ORF("ATGCGAATGTAGCATCAAA")
     'ATGCTACATTCGCAT'
-    """
+"""
     # TODO: implement this
-    pass
+pass
 
 
 def longest_ORF_noncoding(dna, num_trials):
-    """ Computes the maximum length of the longest ORF over num_trials shuffles
+    num_trials=random.randint(2,10)
+    values=[]
+    for i in range(num_trials):
+        values.append(longest_ORF(dna))
+    return max(values,key=len)
+""" Computes the maximum length of the longest ORF over num_trials shuffles
         of the specfied DNA sequence
 
         dna: a DNA sequence
         num_trials: the number of random shuffles
-        returns: the maximum length longest ORF """
+    returns: the maximum length longest ORF """
     # TODO: implement this
-    pass
+pass
 
 
 def coding_strand_to_AA(dna):
-    """ Computes the Protein encoded by a sequence of DNA.  This function
+""" Computes the Protein encoded by a sequence of DNA.  This function
         does not check for start and stop codons (it assumes that the input
         DNA sequence represents an protein coding region).
 
@@ -146,18 +213,16 @@ def coding_strand_to_AA(dna):
         >>> coding_strand_to_AA("ATGCGA")
         'MR'
         >>> coding_strand_to_AA("ATGCCCGCTTT")
-        'MPA'
-    """
+        'MPA'    """
     # TODO: implement this
     pass
 
 
 def gene_finder(dna):
-    """ Returns the amino acid sequences that are likely coded by the specified dna
+""" Returns the amino acid sequences that are likely coded by the specified dna
 
         dna: a DNA sequence
-        returns: a list of all amino acid sequences coded by the sequence dna.
-    """
+        returns: a list of all amino acid sequences coded by the sequence dna.    """
     # TODO: implement this
     pass
 
